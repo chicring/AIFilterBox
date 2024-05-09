@@ -1,0 +1,9 @@
+
+spring:
+  application:
+    name: AIFilterBox
+
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.sqlite.JDBC
+    url: src/main/resources/ai-filter-box.db
