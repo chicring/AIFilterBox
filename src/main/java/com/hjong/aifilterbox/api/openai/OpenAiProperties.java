@@ -18,9 +18,13 @@ public class OpenAiProperties {
      */
     private String apiUrl;
     /**
+     * OpenAI API Model
+     */
+    private String model;
+    /**
      * 是否启用代理
      */
-    private Boolean enableProxy;
+    private boolean enableProxy;
     /**
      * 代理主机
      */

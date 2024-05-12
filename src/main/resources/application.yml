@@ -6,4 +6,9 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.sqlite.JDBC
-    url: src/main/resources/ai-filter-box.db
+    url: "jdbc:sqlite:src/main/resources/db/ai-filter-box.db"
+
+  rabbitmq:
+    addresses: hk.hjong.cn:5672
+    username: Chicring
+    password: 95aninjv

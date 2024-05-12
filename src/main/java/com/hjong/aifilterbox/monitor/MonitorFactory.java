@@ -1,6 +1,9 @@
 package com.hjong.aifilterbox.monitor;
 
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
+
+import static com.hjong.aifilterbox.monitor.Constant.*;
 
 /**
  * @author HJong
@@ -11,8 +14,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class MonitorFactory {
 
+    @Resource
+    DefaultMonitor defaultMonitor;
+
+
     public Monitor getMonitor(String type) {
 
-        return null;
+        return switch (type) {
+            case DEFAULT_MONITOR -> defaultMonitor;
+            default -> null;
+        };
     }
 }
