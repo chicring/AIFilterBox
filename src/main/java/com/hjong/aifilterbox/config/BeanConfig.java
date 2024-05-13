@@ -47,73 +47,77 @@ public class BeanConfig implements InitializingBean {
     public String openaiProxyPort;
 
 
-
     @Override
     public void afterPropertiesSet() throws Exception {
         optionMapper.selectList(new QueryWrapper<Option>())
                 .forEach(option -> {
-            switch (option.getKey()) {
-                case "mailHost":
-                    mailHost = option.getValue();
-                    break;
-                case "mailPort":
-                    mailPort = option.getValue();
-                    break;
-                case "mailUsername":
-                    mailUsername = option.getValue();
-                    break;
-                case "mailPassword":
-                    mailPassword = option.getValue();
-                    break;
-                case "mailTo":
-                    mailTo = option.getValue();
-                    break;
-                case "wxpusherAppToken":
-                    wxpusherAppToken = option.getValue();
-                    break;
-                case "wxpusherUids":
-                    wxpusherUids = option.getValue();
-                    break;
-                case "wxpusherTopicIds":
-                    wxpusherTopicIds = option.getValue();
-                    break;
-                case "geminiApiKey":
-                    geminiApiKey = option.getValue();
-                    break;
-                case "geminiHost":
-                    geminiHost = option.getValue();
-                    break;
-                case "geminiModel":
-                    geminiModel = option.getValue();
-                    break;
-                case "geminiEnableProxy":
-                    geminiEnableProxy = Boolean.parseBoolean(option.getValue());
-                    break;
-                case "geminiProxyHost":
-                    geminiProxyHost = option.getValue();
-                    break;
-                case "geminiProxyPort":
-                    geminiProxyPort = option.getValue();
-                    break;
-                case "openaiHost":
-                    openaiHost = option.getValue();
-                    break;
-                case "openaiApiKey":
-                    openaiApiKey = option.getValue();
-                    break;
-                case "openaiModel":
-                    openaiModel = option.getValue();
-                    break;
-                case "openaiEnableProxy":
-                    openaiEnableProxy = Boolean.parseBoolean(option.getValue());
-                    break;
-                case "openaiProxyHost":
-                    openaiProxyHost = option.getValue();
-                    break;
-                case "openaiProxyPort":
-                    openaiProxyPort = option.getValue();
-                    break;
-            }
+                    doSetting(option);
         });
+    }
+
+    private void doSetting(Opetion option){
+        switch (option.getKey()) {
+            case "mailHost":
+                mailHost = option.getValue();
+                break;
+            case "mailPort":
+                mailPort = option.getValue();
+                break;
+            case "mailUsername":
+                mailUsername = option.getValue();
+                break;
+            case "mailPassword":
+                mailPassword = option.getValue();
+                break;
+            case "mailTo":
+                mailTo = option.getValue();
+                break;
+            case "wxpusherAppToken":
+                wxpusherAppToken = option.getValue();
+                break;
+            case "wxpusherUids":
+                wxpusherUids = option.getValue();
+                break;
+            case "wxpusherTopicIds":
+                wxpusherTopicIds = option.getValue();
+                break;
+            case "geminiApiKey":
+                geminiApiKey = option.getValue();
+                break;
+            case "geminiHost":
+                geminiHost = option.getValue();
+                break;
+            case "geminiModel":
+                geminiModel = option.getValue();
+                break;
+            case "geminiEnableProxy":
+                geminiEnableProxy = Boolean.parseBoolean(option.getValue());
+                break;
+            case "geminiProxyHost":
+                geminiProxyHost = option.getValue();
+                break;
+            case "geminiProxyPort":
+                geminiProxyPort = option.getValue();
+                break;
+            case "openaiHost":
+                openaiHost = option.getValue();
+                break;
+            case "openaiApiKey":
+                openaiApiKey = option.getValue();
+                break;
+            case "openaiModel":
+                openaiModel = option.getValue();
+                break;
+            case "openaiEnableProxy":
+                openaiEnableProxy = Boolean.parseBoolean(option.getValue());
+                break;
+            case "openaiProxyHost":
+                openaiProxyHost = option.getValue();
+                break;
+            case "openaiProxyPort":
+                openaiProxyPort = option.getValue();
+                break;
+        }
+
     }
 }

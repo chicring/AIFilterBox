@@ -19,6 +19,7 @@ public class MailConfig {
     @Resource
     BeanConfig beanConfig;
 
+
     @Bean
     public JavaMailSender javaMailSender(){
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
