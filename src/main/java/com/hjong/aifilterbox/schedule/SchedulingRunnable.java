@@ -3,14 +3,12 @@ package com.hjong.aifilterbox.schedule;
 import com.hjong.aifilterbox.action.ActionFactory;
 import com.hjong.aifilterbox.entity.Message;
 import com.hjong.aifilterbox.entity.Subtask;
-import com.hjong.aifilterbox.entity.Task;
 import com.hjong.aifilterbox.mapper.MessageMapper;
 import com.hjong.aifilterbox.monitor.Monitor;
 import com.hjong.aifilterbox.monitor.MonitorFactory;
+import com.hjong.aifilterbox.util.BloomFilter;
 import com.hjong.aifilterbox.util.SpringContextUtils;
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -31,12 +29,14 @@ public class SchedulingRunnable implements Runnable{
 
     MessageMapper messageMapper;
 
+    BloomFilter bloomFilter;
 
     public SchedulingRunnable(Subtask subtask) {
         this.subtask = subtask;
         this.monitorFactory = SpringContextUtils.getBean(MonitorFactory.class);
         this.actionFactory = SpringContextUtils.getBean(ActionFactory.class);
         this.messageMapper = SpringContextUtils.getBean(MessageMapper.class);
+        this.bloomFilter = SpringContextUtils.getBean(BloomFilter.class);
     }
 
     @Override
@@ -48,12 +48,17 @@ public class SchedulingRunnable implements Runnable{
         Monitor monitor = monitorFactory.getMonitor(subtask.getType());
         List<Message> messages = monitor.getNoticeList(subtask);
 
-        //在数据库中查找是否存在messageId, 如果不存在则提取出来后面在执行插入然后执行对应的action
+        //使用布隆过滤器判断messageId是否存在, 如果不存在则提取出来后面在执行插入然后执行对应的action
+        List<Message> filterMessages = messages.stream().filter(message -> !bloomFilter.contains(message.getMessageId()))
+                .peek(message -> bloomFilter.add(message.getMessageId()))
+                .toList();
 
-
+        filterMessages.forEach(message -> System.out.println(message.getTitle()));
 
         //执行action
-        actionFactory.getAction(subtask.getAction()).doAction(messages);
+        if (!filterMessages.isEmpty()){
+            actionFactory.getAction(subtask.getAction()).doAction(filterMessages);
+        }
 
         log.info("任务{}执行完成, 用时{}", subtask.getName(), System.currentTimeMillis() - start);
     }

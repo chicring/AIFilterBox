@@ -1,5 +1,7 @@
 package com.hjong.aifilterbox.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
@@ -16,6 +18,10 @@ import java.time.Instant;
 public class BaseEntity {
     @TableId
     private Long id;
+
+    @TableField(fill = FieldFill.INSERT)
     private Instant createTime;
+
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Instant updateTime;
 }

@@ -34,7 +34,6 @@ public class SubTaskServiceImpl implements SubTaskService {
 
     @Override
     public void save(Subtask subtask) {
-        subtask.setUpdateTime(Instant.now());
         if (subtaskMapper.insert(subtask) < 1){
             throw new ServiceException(ErrorCode.OPERATION_ERROR);
         }else {
@@ -44,7 +43,6 @@ public class SubTaskServiceImpl implements SubTaskService {
 
     @Override
     public void update(Subtask subtask) {
-        subtask.setUpdateTime(Instant.now());
         if (subtaskMapper.updateById(subtask) < 1) {
             throw new ServiceException(ErrorCode.NOT_FOUND_ERROR);
         }

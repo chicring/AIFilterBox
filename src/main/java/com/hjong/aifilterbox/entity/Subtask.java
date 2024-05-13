@@ -20,6 +20,10 @@ public class Subtask extends BaseEntity{
      */
     private String name;
     /**
+     * 任务描述,喂给ai的提示
+     */
+    private String prompt;
+    /**
      * 任务cron表达式
      */
     private String cronExpression;
@@ -55,6 +59,10 @@ public class Subtask extends BaseEntity{
      * 任务触发行为,  push | answer 所有的任务都会带有push行为，即使没有配置
      */
     private String action;
+    /**
+     * 推送类型，email  |
+     */
+    private String pushType;
     /**
      * 发布地址域名，url需要拼接时使用
      */

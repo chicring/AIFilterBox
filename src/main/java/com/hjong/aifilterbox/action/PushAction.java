@@ -1,6 +1,8 @@
 package com.hjong.aifilterbox.action;
 
+import com.hjong.aifilterbox.api.openai.OpenAiApi;
 import com.hjong.aifilterbox.entity.Message;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,6 +15,9 @@ import java.util.List;
 
 @Component
 public class PushAction implements Action {
+
+    @Resource
+    OpenAiApi openAiApi;
 
     @Override
     public void doAction(List<Message> messages) {

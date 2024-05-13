@@ -10,7 +10,4 @@ public class Constant {
 
     public final static String DEFAULT_MONITOR = "default";
 
-    public final static String BILIBILI_MONITOR = "bilibili";
-
-    public final static String Douyin_MONITOR = "douyin";
 }

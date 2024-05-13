@@ -40,7 +40,6 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void save(Task task) {
-        task.setUpdateTime(Instant.now());
         if (taskMapper.insert(task) < 1){
             throw new ServiceException(ErrorCode.OPERATION_ERROR);
         }
@@ -51,7 +50,6 @@ public class TaskServiceImpl implements TaskService {
         LambdaQueryWrapper<Task> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Task::getId, task.getId());
 
-        task.setUpdateTime(Instant.now());
 
         if (taskMapper.update(task, wrapper) < 1) {
             throw new ServiceException(ErrorCode.NOT_FOUND_ERROR);
