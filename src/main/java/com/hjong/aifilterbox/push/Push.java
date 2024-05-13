@@ -14,7 +14,5 @@ public interface Push {
 
     void send(String title, String content);
 
-    void modifySetting(List<Option> options);
 
-    void removeSetting();
 }

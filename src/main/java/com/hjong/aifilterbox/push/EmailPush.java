@@ -1,6 +1,7 @@
 package com.hjong.aifilterbox.push;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.hjong.aifilterbox.config.BeanConfig;
 import com.hjong.aifilterbox.entity.Option;
 import com.hjong.aifilterbox.mapper.OptionMapper;
 import jakarta.annotation.Resource;
@@ -8,6 +9,7 @@ import jakarta.annotation.Resource;
 import lombok.Data;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
@@ -24,79 +26,84 @@ import static com.hjong.aifilterbox.entity.Constant.*;
  **/
 @Data
 @Component
-public class EmailPush implements Push, InitializingBean {
+public class EmailPush implements Push {
 
     @Resource
-    OptionMapper optionMapper;
+    BeanConfig beanConfig;
 
-    private JavaMailSenderImpl mailSender;
+    @Resource
+    private JavaMailSender mailSender;
 
-    private String email;
-    private String username;
+//    @Resource
+//    OptionMapper optionMapper;
+//
+//    private JavaMailSenderImpl mailSender;
+//
+//    private String email;
+//    private String username;
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        List<Option> options = optionMapper.selectList(new QueryWrapper<Option>().eq("type", Mail_TYPE));
-        if (options.isEmpty()) {
-            return;
-        }
-        mailSender = new JavaMailSenderImpl();
-        mailSender.setDefaultEncoding("UTF-8");
-        doSetting(options);
-    }
+//    @Override
+//    public void afterPropertiesSet() throws Exception {
+//        List<Option> options = optionMapper.selectList(new QueryWrapper<Option>().eq("type", Mail_TYPE));
+//        if (options.isEmpty()) {
+//            return;
+//        }
+//        mailSender = new JavaMailSenderImpl();
+//        mailSender.setDefaultEncoding("UTF-8");
+//        doSetting(options);
+//    }
 
     @Override
     public void send(String title, String content) {
         if (mailSender == null) {
             throw new RuntimeException("暂未配置邮箱信息");
         }
-        System.out.println("Sending email to " + email );
 
-        MimeMessagePreparator message = createHtmlMessage(title, content, email);
+        MimeMessagePreparator message = createHtmlMessage(title, content, beanConfig.getMailTo());
         mailSender.send(message);
     }
 
     private MimeMessagePreparator createHtmlMessage(String title, String htmlContent, String email) {
         return mimeMessage -> {
-            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true); // true表示支持多部分消息
+            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
             messageHelper.setSubject(title);
             messageHelper.setTo(email);
-            messageHelper.setFrom(username);
+            messageHelper.setFrom(beanConfig.getMailUsername());
             messageHelper.setText(htmlContent, true);
         };
     }
 
 
-    @Override
-    public void modifySetting(List<Option> options) {
-        doSetting(options);
-    }
-
-    @Override
-    public void removeSetting() {
-        mailSender = null;
-    }
-
-    private void doSetting(List<Option> options) {
-        options.forEach(option -> {
-            switch (option.getKey()) {
-                case Mail_HOST:
-                    mailSender.setHost(option.getValue());
-                    break;
-                case Mail_PORT:
-                    mailSender.setPort(Integer.parseInt(option.getValue()));
-                    break;
-                case Mail_USERNAME:
-                    mailSender.setUsername(option.getValue());
-                    username = option.getValue();
-                    break;
-                case Mail_PASSWORD:
-                    mailSender.setPassword(option.getValue());
-                    break;
-                case Mail_TO:
-                    email = option.getValue();
-                    break;
-            }
-        });
-    }
+//    @Override
+//    public void modifySetting(List<Option> options) {
+//        doSetting(options);
+//    }
+//
+//    @Override
+//    public void removeSetting() {
+//        mailSender = null;
+//    }
+//
+//    private void doSetting(List<Option> options) {
+//        options.forEach(option -> {
+//            switch (option.getKey()) {
+//                case Mail_HOST:
+//                    mailSender.setHost(option.getValue());
+//                    break;
+//                case Mail_PORT:
+//                    mailSender.setPort(Integer.parseInt(option.getValue()));
+//                    break;
+//                case Mail_USERNAME:
+//                    mailSender.setUsername(option.getValue());
+//                    username = option.getValue();
+//                    break;
+//                case Mail_PASSWORD:
+//                    mailSender.setPassword(option.getValue());
+//                    break;
+//                case Mail_TO:
+//                    email = option.getValue();
+//                    break;
+//            }
+//        });
+//    }
 }

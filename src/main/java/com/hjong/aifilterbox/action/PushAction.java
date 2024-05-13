@@ -5,6 +5,7 @@ import com.hjong.aifilterbox.api.openai.OpenAiApi;
 import com.hjong.aifilterbox.api.openai.OpenAiProperties;
 import com.hjong.aifilterbox.api.openai.model.OpenAiRequestBody;
 import com.hjong.aifilterbox.api.openai.model.OpenAiResponseBody;
+import com.hjong.aifilterbox.config.BeanConfig;
 import com.hjong.aifilterbox.entity.Message;
 import com.hjong.aifilterbox.prompt.DefaultPrompt;
 import com.hjong.aifilterbox.push.Push;
@@ -40,6 +41,9 @@ public class PushAction implements Action {
     @Resource
     GeminiProperties geminiProperties;
 
+    @Resource
+    BeanConfig beanConfig;
+
     @Override
     public void doAction(List<Message> messages,String ...args) {
 
@@ -48,7 +52,7 @@ public class PushAction implements Action {
 
         String pushPrompt = defaultPrompt.pushPrompt(prompt, getContent(messages));
 
-        OpenAiResponseBody openAiResponseBody = openAiApi.doCompletion(OpenAiRequestBody.builder(pushPrompt,openAiProperties.getModel()), openAiProperties);
+        OpenAiResponseBody openAiResponseBody = openAiApi.doCompletion(OpenAiRequestBody.builder(pushPrompt,beanConfig.getOpenaiModel()));
 
         log.info("reply: {}",openAiResponseBody.getChoices().getFirst().getMessage().getContent());
 

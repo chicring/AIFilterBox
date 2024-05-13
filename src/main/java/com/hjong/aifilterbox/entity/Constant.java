@@ -12,7 +12,6 @@ public class Constant {
     public static final String Mail_PORT = "mail.port";
     public static final String Mail_USERNAME = "mail.username";
     public static final String Mail_PASSWORD = "mail.password";
-    public static final String Mail_FROM = "mail.from";
     public static final String Mail_TO = "mail.to";
 
 
@@ -29,7 +28,6 @@ public class Constant {
     public static final String GEMINI_Proxy_Host = "gemini.proxyhost";
     public static final String GEMINI_Proxy_Port = "gemini.proxyport";
 
-
     public static final String OpenAI_TYPE = "openai";
     public static final String OpenAI_HOST = "openai.host";
     public static final String OpenAI_API_KEY = "openai.apikey";
@@ -37,6 +35,5 @@ public class Constant {
     public static final String OpenAI_Enable_Proxy = "openai.enableproxy";
     public static final String OpenAI_Proxy_Host = "openai.proxyhost";
     public static final String OpenAI_Proxy_Port = "openai.proxyport";
-
 
 }

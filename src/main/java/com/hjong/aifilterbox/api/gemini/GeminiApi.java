@@ -3,6 +3,7 @@ package com.hjong.aifilterbox.api.gemini;
 import com.hjong.aifilterbox.api.gemini.model.GeminiRequestBody;
 import com.hjong.aifilterbox.api.gemini.model.GeminiResponseBody;
 import com.hjong.aifilterbox.api.openai.model.OpenAiResponseBody;
+import com.hjong.aifilterbox.config.BeanConfig;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -20,19 +21,21 @@ public class GeminiApi {
     @Resource
     RestClient restClientEnableProxy;
 
+    @Resource
+    BeanConfig beanConfig;
 
-    public GeminiResponseBody doCompletion(GeminiRequestBody requestBody, GeminiProperties properties){
-        if (properties.isEnableProxy()) {
+    public GeminiResponseBody doCompletion(GeminiRequestBody requestBody){
+        if (beanConfig.isGeminiEnableProxy()) {
             return restClientEnableProxy.post()
-                    .uri(properties.getApiUrl())
-                    .header("Authorization", "Bearer " + properties.getApiKey())
+                    .uri(beanConfig.getGeminiHost())
+                    .header("Authorization", "Bearer " + beanConfig.getGeminiApiKey())
                     .body(requestBody)
                     .retrieve()
                     .body(GeminiResponseBody.class);
         } else {
             return restClient.post()
-                    .uri(properties.getApiUrl())
-                    .header("Authorization", "Bearer " + properties.getApiKey())
+                    .uri(beanConfig.getGeminiHost())
+                    .header("Authorization", "Bearer " + beanConfig.getGeminiApiKey())
                     .body(requestBody)
                     .retrieve()
                     .body(GeminiResponseBody.class);
