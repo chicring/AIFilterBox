@@ -11,5 +11,5 @@ import java.util.List;
  **/
 public interface Action {
 
-    void doAction(List<Message> messages);
+    void doAction(List<Message> messages,String ...args);
 }

@@ -12,7 +12,7 @@ import java.util.List;
  **/
 public interface Push {
 
-    void send(Message message);
+    void send(String title, String content);
 
     void modifySetting(List<Option> options);
 

@@ -40,7 +40,7 @@ public class WxPusher implements Push, InitializingBean {
     }
 
     @Override
-    public void send(Message message) {
+    public void send(String title, String content) {
 
     }
 

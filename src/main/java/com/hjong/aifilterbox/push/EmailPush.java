@@ -1,14 +1,16 @@
 package com.hjong.aifilterbox.push;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.hjong.aifilterbox.entity.Message;
 import com.hjong.aifilterbox.entity.Option;
 import com.hjong.aifilterbox.mapper.OptionMapper;
 import jakarta.annotation.Resource;
+
 import lombok.Data;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.boot.autoconfigure.mail.MailProperties;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -29,6 +31,8 @@ public class EmailPush implements Push, InitializingBean {
 
     private JavaMailSenderImpl mailSender;
 
+    private String email;
+    private String username;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -37,16 +41,31 @@ public class EmailPush implements Push, InitializingBean {
             return;
         }
         mailSender = new JavaMailSenderImpl();
-
+        mailSender.setDefaultEncoding("UTF-8");
         doSetting(options);
     }
 
     @Override
-    public void send(Message message) {
+    public void send(String title, String content) {
         if (mailSender == null) {
             throw new RuntimeException("暂未配置邮箱信息");
         }
+        System.out.println("Sending email to " + email );
+
+        MimeMessagePreparator message = createHtmlMessage(title, content, email);
+        mailSender.send(message);
     }
+
+    private MimeMessagePreparator createHtmlMessage(String title, String htmlContent, String email) {
+        return mimeMessage -> {
+            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true); // true表示支持多部分消息
+            messageHelper.setSubject(title);
+            messageHelper.setTo(email);
+            messageHelper.setFrom(username);
+            messageHelper.setText(htmlContent, true);
+        };
+    }
+
 
     @Override
     public void modifySetting(List<Option> options) {
@@ -67,11 +86,15 @@ public class EmailPush implements Push, InitializingBean {
                 case Mail_PORT:
                     mailSender.setPort(Integer.parseInt(option.getValue()));
                     break;
-                case Mail_FROM:
+                case Mail_USERNAME:
                     mailSender.setUsername(option.getValue());
+                    username = option.getValue();
                     break;
                 case Mail_PASSWORD:
                     mailSender.setPassword(option.getValue());
+                    break;
+                case Mail_TO:
+                    email = option.getValue();
                     break;
             }
         });

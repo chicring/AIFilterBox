@@ -57,7 +57,7 @@ public class SchedulingRunnable implements Runnable{
 
         //执行action
         if (!filterMessages.isEmpty()){
-            actionFactory.getAction(subtask.getAction()).doAction(filterMessages);
+            actionFactory.getAction(subtask.getAction()).doAction(filterMessages,subtask.getPushType(),subtask.getPrompt());
         }
 
         log.info("任务{}执行完成, 用时{}", subtask.getName(), System.currentTimeMillis() - start);

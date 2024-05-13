@@ -1,5 +1,7 @@
 package com.hjong.aifilterbox.config;
 
+import com.hjong.aifilterbox.api.openai.OpenAiProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**

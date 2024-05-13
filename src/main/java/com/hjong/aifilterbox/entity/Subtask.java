@@ -67,7 +67,6 @@ public class Subtask extends BaseEntity{
      * 发布地址域名，url需要拼接时使用
      */
     private String domain;
-
     /**
      * 消息id前缀，避免重复
      */

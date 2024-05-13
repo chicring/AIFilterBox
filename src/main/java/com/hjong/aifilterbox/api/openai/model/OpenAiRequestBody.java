@@ -49,4 +49,15 @@ public class OpenAiRequestBody {
             private Object parameters;
         }
     }
+
+    public static OpenAiRequestBody builder(String content, String model){
+        OpenAiRequestBody openAiRequestBody = new OpenAiRequestBody();
+        OpenAiRequestBody.Message message = new OpenAiRequestBody.Message();
+        message.setRole("user");
+        message.setContent(content);
+        openAiRequestBody.setMessages(List.of(message));
+        openAiRequestBody.setStream(false);
+        openAiRequestBody.setModel(model);
+        return openAiRequestBody;
+    }
 }

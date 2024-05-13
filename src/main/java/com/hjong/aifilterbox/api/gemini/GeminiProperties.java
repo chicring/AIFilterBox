@@ -1,4 +1,4 @@
-package com.hjong.aifilterbox.api.openai;
+package com.hjong.aifilterbox.api.gemini;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.hjong.aifilterbox.entity.Option;
@@ -13,11 +13,12 @@ import static com.hjong.aifilterbox.entity.Constant.*;
 /**
  * @author HJong
  * @version 1.0
- * @date 2024/5/9
+ * @date 2024/5/13
  **/
 @Component
 @Data
-public class OpenAiProperties implements InitializingBean {
+public class GeminiProperties implements InitializingBean {
+
     /**
      * OpenAI API Key
      */
@@ -48,25 +49,25 @@ public class OpenAiProperties implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        optionMapper.selectList(new QueryWrapper<Option>().eq("type", OpenAI_TYPE))
+        optionMapper.selectList(new QueryWrapper<Option>().eq("type", GEMINI_TYPE))
                 .forEach(option -> {
                     switch (option.getKey()) {
-                        case OpenAI_API_KEY:
+                        case GEMINI_API_KEY:
                             apiKey = option.getValue();
                             break;
-                        case OpenAI_HOST:
+                        case GEMINI_HOST:
                             apiUrl = option.getValue();
                             break;
-                        case OpenAI_Model:
+                        case GEMINI_Model:
                             model = option.getValue();
                             break;
-                        case OpenAI_Enable_Proxy:
+                        case GEMINI_Enable_Proxy:
                             enableProxy = Boolean.parseBoolean(option.getValue());
                             break;
-                        case OpenAI_Proxy_Host:
+                        case GEMINI_Proxy_Host:
                             proxyHost = option.getValue();
                             break;
-                        case OpenAI_Proxy_Port:
+                        case GEMINI_Proxy_Port:
                             proxyPort = Integer.parseInt(option.getValue());
                             break;
                     }

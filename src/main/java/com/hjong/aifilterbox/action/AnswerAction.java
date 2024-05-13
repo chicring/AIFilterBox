@@ -15,7 +15,7 @@ import java.util.List;
 public class AnswerAction implements Action {
 
     @Override
-    public void doAction(List<Message> messages) {
+    public void doAction(List<Message> messages,String ...args) {
         System.out.println("AnswerAction doAction");
     }
 }

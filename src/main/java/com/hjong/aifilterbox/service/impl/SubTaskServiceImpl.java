@@ -5,14 +5,12 @@ import com.hjong.aifilterbox.entity.Page;
 import com.hjong.aifilterbox.entity.Subtask;
 import com.hjong.aifilterbox.exception.ServiceException;
 import com.hjong.aifilterbox.mapper.SubtaskMapper;
-import com.hjong.aifilterbox.monitor.MonitorFactory;
 import com.hjong.aifilterbox.schedule.CronTaskRegistrar;
 import com.hjong.aifilterbox.schedule.SchedulingRunnable;
 import com.hjong.aifilterbox.service.SubTaskService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 
 /**
  * @author HJong
@@ -25,9 +23,6 @@ public class SubTaskServiceImpl implements SubTaskService {
 
     @Resource
     CronTaskRegistrar cronTaskRegistrar;
-
-    @Resource
-    MonitorFactory monitorFactory;
 
     @Resource
     SubtaskMapper subtaskMapper;
