@@ -3,7 +3,11 @@ package com.hjong.aifilterbox.push;
 import com.hjong.aifilterbox.config.OptionConfig;
 import jakarta.annotation.Resource;
 import lombok.Data;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 /**
  * @author HJong
@@ -11,7 +15,6 @@ import org.springframework.stereotype.Component;
  * @date 2024/5/9
  **/
 
-@Data
 @Component
 public class WxPusher implements Push{
 
@@ -19,8 +22,9 @@ public class WxPusher implements Push{
     OptionConfig optionConfig;
 
 
+
     @Override
-    public void send(String title, String content) {
+    public void send(Map<String, Object> data) {
 
     }
 }

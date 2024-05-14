@@ -3,19 +3,23 @@ package com.hjong.aifilterbox.push;
 import com.hjong.aifilterbox.config.OptionConfig;
 import jakarta.annotation.Resource;
 
-import lombok.Data;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 /**
  * @author HJong
  * @version 1.0
  * @date 2024/5/9
  **/
-@Data
+
 @Component
+@RabbitListener(queues = "mail")
 public class EmailPush implements Push {
 
     @Resource
@@ -25,12 +29,12 @@ public class EmailPush implements Push {
     private JavaMailSender mailSender;
 
     @Override
-    public void send(String title, String content) {
+    @RabbitHandler
+    public void send(Map<String, Object> data) {
         if (mailSender == null) {
             throw new RuntimeException("暂未配置邮箱信息");
         }
-
-        MimeMessagePreparator message = createHtmlMessage(title, content, optionConfig.getMailTo());
+        MimeMessagePreparator message = createHtmlMessage(data.get("title").toString(), data.get("content").toString(), optionConfig.getMailTo());
         mailSender.send(message);
     }
 

@@ -26,9 +26,9 @@ public class MailConfig {
     @Primary
     public JavaMailSender javaMailSender(){
 
-        if(optionConfig.mailHost == null || optionConfig.mailUsername == null || optionConfig.mailPassword == null){
-            return null;
-        }
+//        if(optionConfig.mailHost == null || optionConfig.mailUsername == null || optionConfig.mailPassword == null){
+//            return null;
+//        }
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(optionConfig.mailHost);
         mailSender.setPort(Integer.parseInt(optionConfig.mailPort));

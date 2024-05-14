@@ -63,7 +63,6 @@ public class OptionConfig{
     public String openaiProxyPort;
 
 
-
     @PostConstruct
     public void init() {
         this.optionMapper.selectList(new QueryWrapper<>())

@@ -14,6 +14,7 @@ import com.hjong.aifilterbox.push.Push;
 import com.hjong.aifilterbox.push.PushFactory;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -36,6 +37,9 @@ public class PushAction implements Action {
 
     @Resource
     GeminiApi geminiApi;
+
+    @Resource
+    AmqpTemplate rabbitTemplate;
 
     @Resource
     PushFactory pushFactory;
@@ -68,7 +72,9 @@ public class PushAction implements Action {
 
             List<Message> pushMessages = messages.stream().filter(message -> sendMessageIds.contains(message.getMessageId())).toList();
 
-            doPush("消息推送",pushMessages,pushType);
+            Push push = pushFactory.getPush(pushType);
+            rabbitTemplate.convertAndSend(pushType, Map.of("title", "消息推送", "content", push.buildHtmlContent(pushMessages)));
+//            doPush("消息推送",pushMessages,pushType);
         }
 
     }
@@ -94,7 +100,7 @@ public class PushAction implements Action {
 
     private void doPush(String title,List<Message> messages,String pushType) {
         Push push = pushFactory.getPush(pushType);
-        push.send(title, push.buildHtmlContent(messages));
+        push.send(Map.of("title", title, "content", push.buildHtmlContent(messages)));
     }
 
 

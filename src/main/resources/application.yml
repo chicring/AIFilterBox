@@ -12,3 +12,8 @@ spring:
     addresses: hk.hjong.cn:5672
     username: Chicring
     password: 95aninjv
+
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql

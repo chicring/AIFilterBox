@@ -31,7 +31,7 @@ public class RestClientConfig {
     @Bean
     public RestClient restClientEnableProxy() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        InetSocketAddress address = new InetSocketAddress("127.0.0.1", 2080);
+        InetSocketAddress address = new InetSocketAddress("127.0.0.1", 20171);
         Proxy proxy = new Proxy(Proxy.Type.HTTP, address);
         factory.setProxy(proxy);
 

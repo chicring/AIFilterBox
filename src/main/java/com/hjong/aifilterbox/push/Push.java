@@ -1,9 +1,9 @@
 package com.hjong.aifilterbox.push;
 
 import com.hjong.aifilterbox.entity.Message;
-import com.hjong.aifilterbox.entity.Option;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author HJong
@@ -12,22 +12,41 @@ import java.util.List;
  **/
 public interface Push {
 
-    void send(String title, String content);
+    void send(Map<String, Object> data);
 
     default String buildHtmlContent(List<Message> messages) {
         StringBuilder sb = new StringBuilder();
         for (Message message : messages) {
-            sb.append("<div>");
-            sb.append("<h3>").append(message.getTitle()).append("</h3>");
-            sb.append("<p>").append(message.getDescription()).append("</p>");
-            sb.append("<img src='").append(message.getPicUrl()).append("'/>");
-            sb.append("<p>").append(message.getOwnerName()).append("</p>");
-            sb.append("<img src='").append(message.getOwnerPicUrl()).append("'/>");
-            sb.append("<p>").append(message.getTypeName()).append("</p>");
-            sb.append("<p>").append(message.getPlatformName()).append("</p>");
-            sb.append("<p>").append(message.getTime()).append("</p>");
-            sb.append("<a href='").append(message.getUrl()).append("'>").append(message.getUrl()).append("</a>");
+            sb.append("<div style='position: relative;'>");
+            if (message.getTitle() != null) {
+                sb.append("<h3>").append(message.getTitle()).append("</h3>");
+            }
+            if (message.getDescription() != null) {
+                sb.append("<p>").append(message.getDescription()).append("</p>");
+            }
+            if (message.getPicUrl() != null) {
+                sb.append("<img src='").append(message.getPicUrl()).append("'/>");
+            }
+            if (message.getOwnerName() != null) {
+                sb.append("<p>").append(message.getOwnerName()).append("</p>");
+            }
+            if (message.getOwnerPicUrl() != null) {
+                sb.append("<img src='").append(message.getOwnerPicUrl()).append("' style='position: absolute; bottom: 0; left: 0;'/>");
+            }
+            if (message.getTypeName() != null) {
+                sb.append("<p>").append(message.getTypeName()).append("</p>");
+            }
+            if (message.getPlatformName() != null) {
+                sb.append("<p>").append(message.getPlatformName()).append("</p>");
+            }
+            if (message.getTime() != null) {
+                sb.append("<p style='position: absolute; bottom: 0; right: 0;'>").append(message.getTime()).append("</p>");
+            }
+            if (message.getUrl() != null) {
+                sb.append("<a href='").append(message.getUrl()).append("'>").append(message.getUrl()).append("</a>");
+            }
             sb.append("</div>");
+            sb.append("<hr/>");
         }
         return sb.toString();
     }
