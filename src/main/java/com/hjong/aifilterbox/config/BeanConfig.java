@@ -50,12 +50,10 @@ public class BeanConfig implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         optionMapper.selectList(new QueryWrapper<Option>())
-                .forEach(option -> {
-                    doSetting(option);
-        });
+                .forEach(this::doSetting);
     }
 
-    private void doSetting(Opetion option){
+    private void doSetting(Option option){
         switch (option.getKey()) {
             case "mailHost":
                 mailHost = option.getValue();
