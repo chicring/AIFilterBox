@@ -1,11 +1,13 @@
 package com.hjong.aifilterbox.action;
 
-import com.hjong.aifilterbox.api.gemini.GeminiProperties;
+
+import com.hjong.aifilterbox.api.gemini.GeminiApi;
+import com.hjong.aifilterbox.api.gemini.model.GeminiRequestBody;
+import com.hjong.aifilterbox.api.gemini.model.GeminiResponseBody;
 import com.hjong.aifilterbox.api.openai.OpenAiApi;
-import com.hjong.aifilterbox.api.openai.OpenAiProperties;
 import com.hjong.aifilterbox.api.openai.model.OpenAiRequestBody;
 import com.hjong.aifilterbox.api.openai.model.OpenAiResponseBody;
-import com.hjong.aifilterbox.config.BeanConfig;
+import com.hjong.aifilterbox.config.OptionConfig;
 import com.hjong.aifilterbox.entity.Message;
 import com.hjong.aifilterbox.prompt.DefaultPrompt;
 import com.hjong.aifilterbox.push.Push;
@@ -14,7 +16,10 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author HJong
@@ -30,19 +35,16 @@ public class PushAction implements Action {
     OpenAiApi openAiApi;
 
     @Resource
+    GeminiApi geminiApi;
+
+    @Resource
     PushFactory pushFactory;
 
     @Resource
     DefaultPrompt defaultPrompt;
 
     @Resource
-    OpenAiProperties openAiProperties;
-
-    @Resource
-    GeminiProperties geminiProperties;
-
-    @Resource
-    BeanConfig beanConfig;
+    OptionConfig optionConfig;
 
     @Override
     public void doAction(List<Message> messages,String ...args) {
@@ -52,11 +54,23 @@ public class PushAction implements Action {
 
         String pushPrompt = defaultPrompt.pushPrompt(prompt, getContent(messages));
 
-        OpenAiResponseBody openAiResponseBody = openAiApi.doCompletion(OpenAiRequestBody.builder(pushPrompt,beanConfig.getOpenaiModel()));
+        List<String> sendMessageIds;
 
-        log.info("reply: {}",openAiResponseBody.getChoices().getFirst().getMessage().getContent());
+        if (optionConfig.getAiChannel().equals("openai")){
+            sendMessageIds = doCompletionByOpenAI(pushPrompt);
+        }else {
+           sendMessageIds = doCompletionByGemini(pushPrompt);
+        }
 
-        doPush("推送",openAiResponseBody.getChoices().getFirst().getMessage().getContent(),pushType);
+        if (sendMessageIds.isEmpty()){
+            log.info("没有需要关注的消息");
+        }else {
+
+            List<Message> pushMessages = messages.stream().filter(message -> sendMessageIds.contains(message.getMessageId())).toList();
+
+            doPush("消息推送",pushMessages,pushType);
+        }
+
     }
 
     private String getContent(List<Message> messages) {
@@ -78,8 +92,41 @@ public class PushAction implements Action {
         return sb.toString();
     }
 
-    private void doPush(String title,String content,String pushType) {
+    private void doPush(String title,List<Message> messages,String pushType) {
         Push push = pushFactory.getPush(pushType);
-        push.send(title,content);
+        push.send(title, push.buildHtmlContent(messages));
+    }
+
+
+    private List<String> doCompletionByGemini(String content){
+        GeminiRequestBody.Tool tool = new GeminiRequestBody.Tool();
+
+        GeminiRequestBody.Tool.Function_declarations function = new GeminiRequestBody.Tool.Function_declarations();
+        function.setName("pushToUser");
+        function.setDescription("将消息推送到用户，根据传入的消息id进行推送");
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("type", "object");
+        parameters.put("properties", Map.of("messageIds", Map.of("type", "string", "description", "消息id列表,例如[xbk-56,bili-34]和[xbk-54]")));
+        parameters.put("required", List.of("messageIds"));
+
+        function.setParameters(parameters);
+
+        tool.setFunction_declarations(function);
+
+        GeminiResponseBody geminiResponseBody = geminiApi.doCompletion(GeminiRequestBody.builder(content, List.of(tool)));
+
+        if(geminiResponseBody.getCandidates().getFirst().getContent().getParts().getFirst().getFunctionCall() != null){
+            Map<String, Object> args = geminiResponseBody.getCandidates().getFirst().getContent().getParts().getFirst().getFunctionCall().getArgs();
+            log.info("推送消息id:{}",args.get("messageIds"));
+            return (List<String>) args.get("messageIds");
+        }
+        return List.of();
+    }
+
+    private List<String> doCompletionByOpenAI(String content){
+        OpenAiResponseBody openAiResponseBody = openAiApi.doCompletion(OpenAiRequestBody.builder(content, optionConfig.getOpenaiModel()));
+
+        return List.of();
     }
 }

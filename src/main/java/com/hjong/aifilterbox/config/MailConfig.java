@@ -1,11 +1,13 @@
 package com.hjong.aifilterbox.config;
 
 import jakarta.annotation.Resource;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.stereotype.Component;
 
 /**
  * @author HJong
@@ -17,16 +19,21 @@ import org.springframework.stereotype.Component;
 public class MailConfig {
 
     @Resource
-    BeanConfig beanConfig;
+    OptionConfig optionConfig;
 
 
     @Bean
+    @Primary
     public JavaMailSender javaMailSender(){
+
+        if(optionConfig.mailHost == null || optionConfig.mailUsername == null || optionConfig.mailPassword == null){
+            return null;
+        }
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost(beanConfig.mailHost);
-        mailSender.setPort(Integer.parseInt(beanConfig.mailPort));
-        mailSender.setUsername(beanConfig.mailUsername);
-        mailSender.setPassword(beanConfig.mailPassword);
+        mailSender.setHost(optionConfig.mailHost);
+        mailSender.setPort(Integer.parseInt(optionConfig.mailPort));
+        mailSender.setUsername(optionConfig.mailUsername);
+        mailSender.setPassword(optionConfig.mailPassword);
         mailSender.setDefaultEncoding("UTF-8");
         return mailSender;
     }

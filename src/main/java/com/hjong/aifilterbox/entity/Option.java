@@ -16,8 +16,4 @@ import lombok.EqualsAndHashCode;
 public class Option extends BaseEntity {
     String key;
     String value;
-    /**
-     * 选项类型 mail, push ...
-     */
-    String type;
 }

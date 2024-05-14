@@ -2,7 +2,7 @@ package com.hjong.aifilterbox.api.openai;
 
 import com.hjong.aifilterbox.api.openai.model.OpenAiRequestBody;
 import com.hjong.aifilterbox.api.openai.model.OpenAiResponseBody;
-import com.hjong.aifilterbox.config.BeanConfig;
+import com.hjong.aifilterbox.config.OptionConfig;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -22,20 +22,24 @@ public class OpenAiApi {
     RestClient restClientEnableProxy;
 
     @Resource
-    BeanConfig beanConfig;
+    OptionConfig optionConfig;
 
     public OpenAiResponseBody doCompletion(OpenAiRequestBody requestBody){
-        if (beanConfig.isOpenaiEnableProxy()) {
+        if(optionConfig.getOpenaiHost() == null || optionConfig.getOpenaiApiKey() == null){
+            throw new RuntimeException("openai host or api key is null");
+        }
+
+        if (optionConfig.isOpenaiEnableProxy()) {
             return restClientEnableProxy.post()
-                    .uri(beanConfig.getOpenaiHost() + "/v1/chat/completions")
-                    .header("Authorization", "Bearer " + beanConfig.getOpenaiApiKey())
+                    .uri(optionConfig.getOpenaiHost() + "/v1/chat/completions")
+                    .header("Authorization", "Bearer " + optionConfig.getOpenaiApiKey())
                     .body(requestBody)
                     .retrieve()
                     .body(OpenAiResponseBody.class);
         } else {
             return restClient.post()
-                    .uri(beanConfig.getOpenaiHost() + "/v1/chat/completions")
-                    .header("Authorization", "Bearer " + beanConfig.getOpenaiApiKey())
+                    .uri(optionConfig.getOpenaiHost() + "/v1/chat/completions")
+                    .header("Authorization", "Bearer " + optionConfig.getOpenaiApiKey())
                     .body(requestBody)
                     .retrieve()
                     .body(OpenAiResponseBody.class);

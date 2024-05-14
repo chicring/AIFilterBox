@@ -3,12 +3,14 @@ package com.hjong.aifilterbox.api.gemini.model;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author HJong
  * @version 1.0
  * @date 2024/5/13
  **/
+@Data
 public class GeminiResponseBody {
 
     private List<Candidate> candidates;
@@ -31,7 +33,7 @@ public class GeminiResponseBody {
                 @Data
                 public static class FunctionCAll{
                     private String name;
-                    private Object args;
+                    private Map<String,Object> args;
                 }
             }
         }

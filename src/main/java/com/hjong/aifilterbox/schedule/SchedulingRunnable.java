@@ -53,7 +53,10 @@ public class SchedulingRunnable implements Runnable{
                 .peek(message -> bloomFilter.add(message.getMessageId()))
                 .toList();
 
-        filterMessages.forEach(message -> System.out.println(message.getTitle()));
+        filterMessages.forEach(message -> log.info(message.getTitle()));
+        //执行关键词匹配和过滤
+
+
 
         //执行action
         if (!filterMessages.isEmpty()){

@@ -4,10 +4,21 @@ package com.hjong.aifilterbox.config;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.hjong.aifilterbox.entity.Option;
 import com.hjong.aifilterbox.mapper.OptionMapper;
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.Data;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.DefaultSingletonBeanRegistry;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+
+import java.util.List;
 
 /**
  * @author HJong
@@ -17,13 +28,16 @@ import org.springframework.context.annotation.Configuration;
 
 @Data
 @Configuration
-public class BeanConfig implements InitializingBean {
+public class OptionConfig{
 
     @Resource
     OptionMapper optionMapper;
 
+    @Resource
+    private ApplicationContext context;
+
     public String mailHost;
-    public String mailPort;
+    public String mailPort = "587";
     public String mailUsername;
     public String mailPassword;
     public String mailTo;
@@ -31,6 +45,8 @@ public class BeanConfig implements InitializingBean {
     public String wxpusherAppToken;
     public String wxpusherUids;
     public String wxpusherTopicIds;
+
+    public String aiChannel = "openai";
 
     public String geminiApiKey;
     public String geminiHost;
@@ -47,25 +63,45 @@ public class BeanConfig implements InitializingBean {
     public String openaiProxyPort;
 
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        optionMapper.selectList(new QueryWrapper<Option>())
+
+    @PostConstruct
+    public void init() {
+        this.optionMapper.selectList(new QueryWrapper<>())
                 .forEach(this::doSetting);
     }
 
+    public void refresh(){
+        this.optionMapper.selectList(new QueryWrapper<>())
+                .forEach(this::doSetting);
+    }
+
+    public void refresh(Option option){
+        doSetting(option);
+    }
+
+    public void refresh(List<Option> options){
+        options.forEach(this::doSetting);
+    }
+
     private void doSetting(Option option){
+        int emailChange = 0;
+
         switch (option.getKey()) {
             case "mailHost":
                 mailHost = option.getValue();
+                emailChange++;
                 break;
             case "mailPort":
                 mailPort = option.getValue();
+                emailChange++;
                 break;
             case "mailUsername":
                 mailUsername = option.getValue();
+                emailChange++;
                 break;
             case "mailPassword":
                 mailPassword = option.getValue();
+                emailChange++;
                 break;
             case "mailTo":
                 mailTo = option.getValue();
@@ -78,6 +114,9 @@ public class BeanConfig implements InitializingBean {
                 break;
             case "wxpusherTopicIds":
                 wxpusherTopicIds = option.getValue();
+                break;
+            case "aiChannel":
+                aiChannel = option.getValue();
                 break;
             case "geminiApiKey":
                 geminiApiKey = option.getValue();
@@ -117,5 +156,27 @@ public class BeanConfig implements InitializingBean {
                 break;
         }
 
+        if(emailChange > 0){
+            refreshMailSender();
+        }
+    }
+
+
+
+    private void refreshMailSender(){
+        ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) context;
+        ConfigurableListableBeanFactory beanFactory = configurableApplicationContext.getBeanFactory();
+        DefaultSingletonBeanRegistry registry = (DefaultSingletonBeanRegistry) beanFactory;
+
+        registry.destroySingleton("javaMailSender");
+
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost(mailHost);
+        mailSender.setPort(Integer.parseInt(mailPort));
+        mailSender.setUsername(mailUsername);
+        mailSender.setPassword(mailPassword);
+        mailSender.setDefaultEncoding("UTF-8");
+
+        registry.registerSingleton("javaMailSender", mailSender);
     }
 }

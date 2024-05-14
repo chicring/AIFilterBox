@@ -2,8 +2,8 @@ package com.hjong.aifilterbox.api.gemini;
 
 import com.hjong.aifilterbox.api.gemini.model.GeminiRequestBody;
 import com.hjong.aifilterbox.api.gemini.model.GeminiResponseBody;
-import com.hjong.aifilterbox.api.openai.model.OpenAiResponseBody;
-import com.hjong.aifilterbox.config.BeanConfig;
+import com.hjong.aifilterbox.config.OptionConfig;
+import com.hjong.aifilterbox.util.JsonUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -22,23 +22,33 @@ public class GeminiApi {
     RestClient restClientEnableProxy;
 
     @Resource
-    BeanConfig beanConfig;
+    OptionConfig optionConfig;
 
     public GeminiResponseBody doCompletion(GeminiRequestBody requestBody){
-        if (beanConfig.isGeminiEnableProxy()) {
+        if(optionConfig.getOpenaiHost() == null || optionConfig.getOpenaiApiKey() == null){
+            throw new RuntimeException("Gemini host or api key is null");
+        }
+
+        if (optionConfig.isGeminiEnableProxy()) {
             return restClientEnableProxy.post()
-                    .uri(beanConfig.getGeminiHost())
-                    .header("Authorization", "Bearer " + beanConfig.getGeminiApiKey())
+                    .uri(createUrl())
                     .body(requestBody)
                     .retrieve()
                     .body(GeminiResponseBody.class);
         } else {
             return restClient.post()
-                    .uri(beanConfig.getGeminiHost())
-                    .header("Authorization", "Bearer " + beanConfig.getGeminiApiKey())
+                    .uri(createUrl())
                     .body(requestBody)
                     .retrieve()
                     .body(GeminiResponseBody.class);
         }
+    }
+
+    private String createUrl() {
+        return optionConfig.getGeminiHost()
+                + "/v1beta/models/"
+                + optionConfig.getGeminiModel()
+                + ":generateContent?key="
+                + optionConfig.getGeminiApiKey();
     }
 }

@@ -1,23 +1,13 @@
 package com.hjong.aifilterbox.push;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.hjong.aifilterbox.config.BeanConfig;
-import com.hjong.aifilterbox.entity.Option;
-import com.hjong.aifilterbox.mapper.OptionMapper;
+import com.hjong.aifilterbox.config.OptionConfig;
 import jakarta.annotation.Resource;
 
 import lombok.Data;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-
-import static com.hjong.aifilterbox.entity.Constant.*;
 
 /**
  * @author HJong
@@ -29,29 +19,10 @@ import static com.hjong.aifilterbox.entity.Constant.*;
 public class EmailPush implements Push {
 
     @Resource
-    BeanConfig beanConfig;
+    OptionConfig optionConfig;
 
     @Resource
     private JavaMailSender mailSender;
-
-//    @Resource
-//    OptionMapper optionMapper;
-//
-//    private JavaMailSenderImpl mailSender;
-//
-//    private String email;
-//    private String username;
-
-//    @Override
-//    public void afterPropertiesSet() throws Exception {
-//        List<Option> options = optionMapper.selectList(new QueryWrapper<Option>().eq("type", Mail_TYPE));
-//        if (options.isEmpty()) {
-//            return;
-//        }
-//        mailSender = new JavaMailSenderImpl();
-//        mailSender.setDefaultEncoding("UTF-8");
-//        doSetting(options);
-//    }
 
     @Override
     public void send(String title, String content) {
@@ -59,7 +30,7 @@ public class EmailPush implements Push {
             throw new RuntimeException("暂未配置邮箱信息");
         }
 
-        MimeMessagePreparator message = createHtmlMessage(title, content, beanConfig.getMailTo());
+        MimeMessagePreparator message = createHtmlMessage(title, content, optionConfig.getMailTo());
         mailSender.send(message);
     }
 
@@ -68,42 +39,9 @@ public class EmailPush implements Push {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
             messageHelper.setSubject(title);
             messageHelper.setTo(email);
-            messageHelper.setFrom(beanConfig.getMailUsername());
+            messageHelper.setFrom(optionConfig.getMailUsername());
             messageHelper.setText(htmlContent, true);
         };
     }
 
-
-//    @Override
-//    public void modifySetting(List<Option> options) {
-//        doSetting(options);
-//    }
-//
-//    @Override
-//    public void removeSetting() {
-//        mailSender = null;
-//    }
-//
-//    private void doSetting(List<Option> options) {
-//        options.forEach(option -> {
-//            switch (option.getKey()) {
-//                case Mail_HOST:
-//                    mailSender.setHost(option.getValue());
-//                    break;
-//                case Mail_PORT:
-//                    mailSender.setPort(Integer.parseInt(option.getValue()));
-//                    break;
-//                case Mail_USERNAME:
-//                    mailSender.setUsername(option.getValue());
-//                    username = option.getValue();
-//                    break;
-//                case Mail_PASSWORD:
-//                    mailSender.setPassword(option.getValue());
-//                    break;
-//                case Mail_TO:
-//                    email = option.getValue();
-//                    break;
-//            }
-//        });
-//    }
 }
