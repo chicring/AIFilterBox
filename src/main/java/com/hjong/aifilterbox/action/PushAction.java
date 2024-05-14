@@ -72,9 +72,9 @@ public class PushAction implements Action {
 
             List<Message> pushMessages = messages.stream().filter(message -> sendMessageIds.contains(message.getMessageId())).toList();
 
-            Push push = pushFactory.getPush(pushType);
-            rabbitTemplate.convertAndSend(pushType, Map.of("title", "消息推送", "content", push.buildHtmlContent(pushMessages)));
-//            doPush("消息推送",pushMessages,pushType);
+//            Push push = pushFactory.getPush(pushType);
+//            rabbitTemplate.convertAndSend(pushType,Map.of("title", "消息推送", "content", push.buildHtmlContent(pushMessages)));
+            doPush("消息推送",pushMessages,pushType);
         }
 
     }

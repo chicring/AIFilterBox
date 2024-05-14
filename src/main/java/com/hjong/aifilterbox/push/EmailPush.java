@@ -19,7 +19,6 @@ import java.util.Map;
  **/
 
 @Component
-@RabbitListener(queues = "mail")
 public class EmailPush implements Push {
 
     @Resource
@@ -30,11 +29,10 @@ public class EmailPush implements Push {
 
     @Override
     @RabbitHandler
-    public void send(Map<String, Object> data) {
-        if (mailSender == null) {
-            throw new RuntimeException("暂未配置邮箱信息");
-        }
-        MimeMessagePreparator message = createHtmlMessage(data.get("title").toString(), data.get("content").toString(), optionConfig.getMailTo());
+    @RabbitListener(queues = "mail")
+    public void send(Map<String, String> data) {
+
+        MimeMessagePreparator message = createHtmlMessage(data.get("title"), data.get("content"), optionConfig.getMailTo());
         mailSender.send(message);
     }
 

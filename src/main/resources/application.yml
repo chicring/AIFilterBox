@@ -12,6 +12,13 @@ spring:
     addresses: hk.hjong.cn:5672
     username: Chicring
     password: 95aninjv
+    stream:
+      virtual-host: /
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 3
 
   sql:
     init:

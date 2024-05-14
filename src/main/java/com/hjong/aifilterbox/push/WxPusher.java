@@ -22,9 +22,8 @@ public class WxPusher implements Push{
     OptionConfig optionConfig;
 
 
-
     @Override
-    public void send(Map<String, Object> data) {
+    public void send(Map<String, String> data) {
 
     }
 }
