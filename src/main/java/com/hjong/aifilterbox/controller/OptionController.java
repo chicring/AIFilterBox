@@ -14,6 +14,8 @@ import java.util.List;
  * @version 1.0
  * @date 2024/5/14
  **/
+
+@CrossOrigin
 @RequestMapping("/option")
 @RestController
 public class OptionController {
@@ -27,8 +29,14 @@ public class OptionController {
     }
 
     @PostMapping
-    public Result<Void> save(Option option) {
-        optionService.save(option);
+    public Result<Void> save(@RequestBody Option option) {
+        optionService.saveOption(option);
+        return Result.ok();
+    }
+
+    @PostMapping("/batch")
+    public Result<Void> saveBatch(@RequestBody List<Option> options) {
+        optionService.saveBatch(options);
         return Result.ok();
     }
 

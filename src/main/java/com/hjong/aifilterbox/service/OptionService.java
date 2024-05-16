@@ -1,5 +1,6 @@
 package com.hjong.aifilterbox.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.hjong.aifilterbox.entity.Option;
 
 import java.util.List;
@@ -10,11 +11,13 @@ import java.util.List;
  * @date 2024/5/15
  **/
 
-public interface OptionService {
+public interface OptionService extends IService<Option> {
 
     List<Option> selectList();
 
-    void save(Option option);
+    void saveOption(Option option);
+
+    void saveBatch(List<Option> options);
 
     void update(Option option);
 }

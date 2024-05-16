@@ -1,6 +1,7 @@
 package com.hjong.aifilterbox.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hjong.aifilterbox.config.OptionConfig;
 import com.hjong.aifilterbox.entity.Option;
 import com.hjong.aifilterbox.mapper.OptionMapper;
@@ -16,7 +17,7 @@ import java.util.List;
  * @date 2024/5/15
  **/
 @Service
-public class OptionServiceImpl implements OptionService {
+public class OptionServiceImpl extends ServiceImpl<OptionMapper,Option> implements OptionService{
 
     @Resource
     OptionMapper optionMapper;
@@ -30,9 +31,15 @@ public class OptionServiceImpl implements OptionService {
     }
 
     @Override
-    public void save(Option option) {
-        optionMapper.insert(option);
+    public void saveOption(Option option) {
+        this.saveOrUpdate(option);
         optionConfig.refresh(option);
+    }
+
+    @Override
+    public void saveBatch(List<Option> options) {
+        this.saveOrUpdateBatch(options);
+        optionConfig.refresh(options);
     }
 
     @Override

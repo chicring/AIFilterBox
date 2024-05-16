@@ -7,6 +7,7 @@ import com.hjong.aifilterbox.mapper.OptionMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultSingletonBeanRegistry;
@@ -26,6 +27,7 @@ import java.util.List;
  * @date 2024/5/13
  **/
 
+@Slf4j
 @Data
 @Configuration
 public class OptionConfig{
@@ -156,6 +158,7 @@ public class OptionConfig{
         }
 
         if(emailChange > 0){
+            log.info("邮箱配置改变，刷新邮箱...");
             refreshMailSender();
         }
     }

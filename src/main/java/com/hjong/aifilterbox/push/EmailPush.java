@@ -1,6 +1,7 @@
 package com.hjong.aifilterbox.push;
 
 import com.hjong.aifilterbox.config.OptionConfig;
+import com.hjong.aifilterbox.util.SpringContextUtils;
 import jakarta.annotation.Resource;
 
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
@@ -24,16 +25,14 @@ public class EmailPush implements Push {
     @Resource
     OptionConfig optionConfig;
 
-    @Resource
-    private JavaMailSender mailSender;
-
     @Override
     @RabbitHandler
     @RabbitListener(queues = "mail")
     public void send(Map<String, String> data) {
 
         MimeMessagePreparator message = createHtmlMessage(data.get("title"), data.get("content"), optionConfig.getMailTo());
-        mailSender.send(message);
+
+        SpringContextUtils.getBean(JavaMailSender.class).send(message);
     }
 
     private MimeMessagePreparator createHtmlMessage(String title, String htmlContent, String email) {

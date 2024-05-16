@@ -67,7 +67,7 @@ public class PushAction implements Action {
         if (optionConfig.getAiChannel().equals("openai")){
             sendMessageIds = doCompletionByOpenAI(pushPrompt);
         }else {
-           sendMessageIds = doCompletionByGemini(pushPrompt);
+            sendMessageIds = doCompletionByGemini(pushPrompt);
         }
 
         if (sendMessageIds.isEmpty()){
