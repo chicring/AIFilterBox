@@ -9,6 +9,7 @@ import com.hjong.aifilterbox.api.openai.model.OpenAiRequestBody;
 import com.hjong.aifilterbox.api.openai.model.OpenAiResponseBody;
 import com.hjong.aifilterbox.config.OptionConfig;
 import com.hjong.aifilterbox.entity.Message;
+import com.hjong.aifilterbox.mapper.MessageMapper;
 import com.hjong.aifilterbox.prompt.DefaultPrompt;
 import com.hjong.aifilterbox.push.Push;
 import com.hjong.aifilterbox.push.PushFactory;
@@ -38,8 +39,8 @@ public class PushAction implements Action {
     @Resource
     GeminiApi geminiApi;
 
-    @Resource
-    AmqpTemplate rabbitTemplate;
+//    @Resource
+//    AmqpTemplate rabbitTemplate;
 
     @Resource
     PushFactory pushFactory;
@@ -49,6 +50,9 @@ public class PushAction implements Action {
 
     @Resource
     OptionConfig optionConfig;
+
+    @Resource
+    MessageMapper messageMapper;
 
     @Override
     public void doAction(List<Message> messages,String ...args) {
@@ -72,9 +76,12 @@ public class PushAction implements Action {
 
             List<Message> pushMessages = messages.stream().filter(message -> sendMessageIds.contains(message.getMessageId())).toList();
 
-//            Push push = pushFactory.getPush(pushType);
-//            rabbitTemplate.convertAndSend(pushType,Map.of("title", "消息推送", "content", push.buildHtmlContent(pushMessages)));
             doPush("消息推送",pushMessages,pushType);
+
+            pushMessages.forEach(message -> {
+                messageMapper.insert(message);
+            });
+
         }
 
     }

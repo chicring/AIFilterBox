@@ -1,8 +1,11 @@
 package com.hjong.aifilterbox.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hjong.aifilterbox.common.ErrorCode;
-import com.hjong.aifilterbox.entity.Page;
+import com.hjong.aifilterbox.common.PageResp;
 import com.hjong.aifilterbox.entity.Subtask;
+import com.hjong.aifilterbox.entity.vo.SubtaskVO;
 import com.hjong.aifilterbox.exception.ServiceException;
 import com.hjong.aifilterbox.mapper.SubtaskMapper;
 import com.hjong.aifilterbox.schedule.CronTaskRegistrar;
@@ -73,7 +76,20 @@ public class SubTaskServiceImpl implements SubTaskService {
     }
 
     @Override
-    public Page<Subtask> findPage() {
-        return null;
+    public PageResp<Subtask> findPage(SubtaskVO vo) {
+
+        QueryWrapper<Subtask> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(vo.getType() != null, "type", vo.getType());
+        queryWrapper.eq(vo.getAction() != null, "action", vo.getAction());
+        queryWrapper.eq(vo.getPushType() != null, "push_type", vo.getPushType());
+        queryWrapper.eq(vo.getEnable() != null, "enable", vo.getEnable());
+        queryWrapper.like(vo.getName() != null, "name", vo.getName());
+        queryWrapper.orderByDesc("create_time");
+
+        Page<Subtask> page = new Page<>(vo.getPage(), vo.getSize());
+
+        page = subtaskMapper.selectPage(page, queryWrapper);
+
+        return new PageResp<>(page);
     }
 }

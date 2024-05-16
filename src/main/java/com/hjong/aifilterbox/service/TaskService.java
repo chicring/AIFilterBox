@@ -1,6 +1,7 @@
 package com.hjong.aifilterbox.service;
 
-import com.hjong.aifilterbox.entity.Page;
+import com.hjong.aifilterbox.common.BasePage;
+import com.hjong.aifilterbox.common.PageResp;
 import com.hjong.aifilterbox.entity.Task;
 
 /**
@@ -18,5 +19,5 @@ public interface TaskService {
 
     void deleteById(Long id);
 
-    Page<Task> findPage();
+    PageResp<Task> findPage(BasePage page);
 }

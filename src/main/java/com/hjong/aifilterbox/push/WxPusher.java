@@ -1,12 +1,14 @@
 package com.hjong.aifilterbox.push;
 
 import com.hjong.aifilterbox.config.OptionConfig;
+import com.hjong.aifilterbox.entity.Message;
 import jakarta.annotation.Resource;
 import lombok.Data;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,5 +27,10 @@ public class WxPusher implements Push{
     @Override
     public void send(Map<String, String> data) {
 
+    }
+
+    @Override
+    public String buildHtmlContent(List<Message> messages){
+        return null;
     }
 }

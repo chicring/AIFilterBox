@@ -1,9 +1,12 @@
 package com.hjong.aifilterbox.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.hjong.aifilterbox.common.BasePage;
 import com.hjong.aifilterbox.common.ErrorCode;
-import com.hjong.aifilterbox.entity.Page;
+import com.hjong.aifilterbox.common.PageResp;
 import com.hjong.aifilterbox.entity.Subtask;
 import com.hjong.aifilterbox.entity.Task;
 import com.hjong.aifilterbox.exception.ServiceException;
@@ -97,7 +100,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Page<Task> findPage(){
-        return null;
+    public PageResp<Task> findPage(BasePage page){
+        Page<Task> taskPage = taskMapper.selectPage(new Page<>(page.getPage(), page.getSize()), new QueryWrapper<>());
+
+        return new PageResp<>(taskPage);
     }
 }

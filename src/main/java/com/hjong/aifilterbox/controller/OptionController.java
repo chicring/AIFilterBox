@@ -1,35 +1,42 @@
 package com.hjong.aifilterbox.controller;
 
+import com.hjong.aifilterbox.common.Result;
 import com.hjong.aifilterbox.config.OptionConfig;
 import com.hjong.aifilterbox.entity.Option;
+import com.hjong.aifilterbox.service.OptionService;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author HJong
  * @version 1.0
  * @date 2024/5/14
  **/
+@RequestMapping("/option")
 @RestController
 public class OptionController {
 
     @Resource
-    OptionConfig optionConfig;
+    OptionService optionService;
 
-
-    @GetMapping("/option")
-    public void test(String username){
-//        Option option = new Option();
-//        option.setKey("mailTo");
-//        option.setValue(username);
-//
-//        optionConfig.refresh(option);
-
-        Option option1 = new Option();
-        option1.setKey("mailTo");
-        option1.setValue(username);
-
-        optionConfig.refresh(option1);
+    @GetMapping
+    public Result<List<Option>> findAll() {
+        return Result.ok(optionService.selectList());
     }
+
+    @PostMapping
+    public Result<Void> save(Option option) {
+        optionService.save(option);
+        return Result.ok();
+    }
+
+    @PutMapping
+    public Result<Void> update(Option option) {
+        optionService.update(option);
+        return Result.ok();
+    }
+
+
 }

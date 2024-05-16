@@ -1,7 +1,8 @@
 package com.hjong.aifilterbox.service;
 
-import com.hjong.aifilterbox.entity.Page;
+import com.hjong.aifilterbox.common.PageResp;
 import com.hjong.aifilterbox.entity.Subtask;
+import com.hjong.aifilterbox.entity.vo.SubtaskVO;
 
 /**
  * @author HJong
@@ -18,5 +19,5 @@ public interface SubTaskService {
 
     void deleteById(Long id);
 
-    Page<Subtask> findPage();
+    PageResp<Subtask> findPage(SubtaskVO vo);
 }
