@@ -15,6 +15,7 @@ import java.time.Instant;
  * @version 1.0
  * @date 2024/5/15
  **/
+@CrossOrigin
 @RequestMapping("/message")
 @RestController
 public class MessageController {
@@ -30,7 +31,9 @@ public class MessageController {
                                               @RequestParam(value = "typeName", required = false) String typeName,
                                               @RequestParam(value = "platformName", required = false) String platformName,
                                               @RequestParam(value = "startTime", required = false) Instant startTime,
-                                              @RequestParam(value = "endTime", required = false) Instant endTime) {
+                                              @RequestParam(value = "endTime", required = false) Instant endTime,
+                                              @RequestParam(value = "used",required = false) boolean used
+    ) {
         MessageVO vo = new MessageVO();
         vo.setPage(page);
         vo.setSize(size);
@@ -40,6 +43,7 @@ public class MessageController {
         vo.setPlatformName(platformName);
         vo.setStartTime(startTime);
         vo.setEndTime(endTime);
+        vo.setUsed(used);
 
         return Result.ok(messageService.findPage(vo));
     }

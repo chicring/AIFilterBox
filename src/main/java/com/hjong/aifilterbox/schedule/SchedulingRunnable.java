@@ -1,5 +1,6 @@
 package com.hjong.aifilterbox.schedule;
 
+import cn.hutool.dfa.WordTree;
 import com.hjong.aifilterbox.action.ActionFactory;
 import com.hjong.aifilterbox.entity.Message;
 import com.hjong.aifilterbox.entity.Subtask;
@@ -31,12 +32,31 @@ public class SchedulingRunnable implements Runnable{
 
     BloomFilter bloomFilter;
 
+    WordTree matchTree;
+
+    WordTree blockTree;
+
     public SchedulingRunnable(Subtask subtask) {
         this.subtask = subtask;
         this.monitorFactory = SpringContextUtils.getBean(MonitorFactory.class);
         this.actionFactory = SpringContextUtils.getBean(ActionFactory.class);
         this.messageMapper = SpringContextUtils.getBean(MessageMapper.class);
         this.bloomFilter = SpringContextUtils.getBean(BloomFilter.class);
+
+
+        String[] matchKeywords = subtask.getKeywordMatching().split(",");
+        String[] blockKeywords = subtask.getKeywordBlocking().split(",");
+
+        matchTree = new WordTree();
+        blockTree = new WordTree();
+
+        for (String key : matchKeywords){
+            matchTree.addWord(key);
+        }
+
+        for (String key : blockKeywords){
+            blockTree.addWord(key);
+        }
     }
 
     @Override
@@ -53,9 +73,17 @@ public class SchedulingRunnable implements Runnable{
                 .peek(message -> bloomFilter.add(message.getMessageId()))
                 .toList();
 
-        filterMessages.forEach(message -> log.info(message.getTitle()));
-        //执行关键词匹配和过滤
+        //关键词过滤
+        if (!subtask.getKeywordBlocking().isEmpty()){
+            filterMessages = filterMessages.stream().filter(message -> !blockTree.isMatch(message.getTitle())).toList();
+        }
 
+        //关键词匹配
+        if (!subtask.getKeywordMatching().isEmpty()){
+            filterMessages = filterMessages.stream().filter(message -> matchTree.isMatch(message.getTitle())).toList();
+        }
+
+        filterMessages.forEach(message -> log.info(message.getTitle()));
 
 
         //执行action
@@ -63,6 +91,6 @@ public class SchedulingRunnable implements Runnable{
             actionFactory.getAction(subtask.getAction()).doAction(filterMessages,subtask.getPushType(),subtask.getPrompt());
         }
 
-        log.info("任务{}执行完成, 用时{}", subtask.getName(), System.currentTimeMillis() - start);
+        log.info("任务 {} 执行完成, 用时 {}ms", subtask.getName(), System.currentTimeMillis() - start);
     }
 }

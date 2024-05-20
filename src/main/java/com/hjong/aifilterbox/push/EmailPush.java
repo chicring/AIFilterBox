@@ -4,8 +4,9 @@ import com.hjong.aifilterbox.config.OptionConfig;
 import com.hjong.aifilterbox.util.SpringContextUtils;
 import jakarta.annotation.Resource;
 
-import org.springframework.amqp.rabbit.annotation.RabbitHandler;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.ExchangeTypes;
+import org.springframework.amqp.rabbit.annotation.*;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
@@ -18,7 +19,7 @@ import java.util.Map;
  * @version 1.0
  * @date 2024/5/9
  **/
-
+@Slf4j
 @Component
 public class EmailPush implements Push {
 
@@ -26,10 +27,12 @@ public class EmailPush implements Push {
     OptionConfig optionConfig;
 
     @Override
-    @RabbitHandler
-    @RabbitListener(queues = "mail")
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(name = "direct.mail", durable = "true"),
+            exchange = @Exchange(name = "push.direct", type = ExchangeTypes.DIRECT),
+            key = {"mail"}
+    ))
     public void send(Map<String, String> data) {
-
         MimeMessagePreparator message = createHtmlMessage(data.get("title"), data.get("content"), optionConfig.getMailTo());
 
         SpringContextUtils.getBean(JavaMailSender.class).send(message);

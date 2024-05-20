@@ -38,9 +38,10 @@ public class MessageServiceImpl implements MessageService {
                 .like(vo.getOwnerName() != null, "owner_name", vo.getOwnerName())
                 .like(vo.getTypeName() != null, "type_name", vo.getTypeName())
                 .like(vo.getPlatformName() != null, "platform_name", vo.getPlatformName())
+                .eq(vo.getUsed() != null, "used", vo.getUsed())
                 .ge(vo.getStartTime() != null, "create_time", vo.getStartTime())
-                .le(vo.getEndTime() != null, "create_time", vo.getEndTime());
-
+                .le(vo.getEndTime() != null, "create_time", vo.getEndTime())
+                .orderByDesc("create_time");
         Page<Message> page = new Page<>(vo.getPage(), vo.getSize());
 
         page = messageMapper.selectPage(page, queryWrapper);

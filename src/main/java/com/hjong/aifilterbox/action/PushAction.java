@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.hjong.aifilterbox.util.TemplateUtil.buildHtmlContent;
+
 /**
  * @author HJong
  * @version 1.0
@@ -39,8 +41,8 @@ public class PushAction implements Action {
     @Resource
     GeminiApi geminiApi;
 
-//    @Resource
-//    AmqpTemplate rabbitTemplate;
+    @Resource
+    AmqpTemplate rabbitTemplate;
 
     @Resource
     PushFactory pushFactory;
@@ -76,11 +78,11 @@ public class PushAction implements Action {
 
             List<Message> pushMessages = messages.stream().filter(message -> sendMessageIds.contains(message.getMessageId())).toList();
 
-            doPush("消息推送",pushMessages,pushType);
-
             pushMessages.forEach(message -> {
                 messageMapper.insert(message);
             });
+
+            rabbitTemplate.convertAndSend("push.direct",pushType,Map.of("title","消息推送","content",buildHtmlContent(pushMessages)));
 
         }
 
@@ -107,7 +109,7 @@ public class PushAction implements Action {
 
     private void doPush(String title,List<Message> messages,String pushType) {
         Push push = pushFactory.getPush(pushType);
-        push.send(Map.of("title", title, "content", push.buildHtmlContent(messages)));
+        push.send(Map.of("title", title, "content", buildHtmlContent(messages)));
     }
 
 

@@ -21,4 +21,5 @@ public class MessageVO extends BasePage {
     private String platformName;
     private Instant startTime;
     private Instant endTime;
+    private Boolean used;
 }
