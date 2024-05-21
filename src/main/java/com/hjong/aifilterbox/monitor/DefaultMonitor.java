@@ -35,12 +35,11 @@ public class DefaultMonitor implements Monitor {
         //设置请求头
         HttpHeaders httpHeaders = new HttpHeaders();
 
-        if (subtask.getRequestHeader() == null) {
-            subtask.setRequestHeader("{}");
-        }
-        Map<String, String> customHeaders = JsonUtil.parseObject(subtask.getRequestHeader(), HashMap.class);
-        for (Map.Entry<String, String> entry : customHeaders.entrySet()) {
-            httpHeaders.add(entry.getKey(), entry.getValue());
+        if (!subtask.getRequestHeader().isEmpty()) {
+            Map<String, String> customHeaders = JsonUtil.parseObject(subtask.getRequestHeader(), HashMap.class);
+            for (Map.Entry<String, String> entry : customHeaders.entrySet()) {
+                httpHeaders.add(entry.getKey(), entry.getValue());
+            }
         }
 
         String json =  restClient.get()

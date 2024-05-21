@@ -15,7 +15,6 @@ import java.time.Instant;
  * @version 1.0
  * @date 2024/5/15
  **/
-@CrossOrigin
 @RequestMapping("/message")
 @RestController
 public class MessageController {

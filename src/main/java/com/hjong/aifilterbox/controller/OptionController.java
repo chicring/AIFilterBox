@@ -15,7 +15,7 @@ import java.util.List;
  * @date 2024/5/14
  **/
 
-@CrossOrigin
+
 @RequestMapping("/option")
 @RestController
 public class OptionController {

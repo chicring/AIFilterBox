@@ -59,6 +59,8 @@ public class SubTaskServiceImpl implements SubTaskService {
 
         if (enable){
             Subtask subtask = subtaskMapper.selectById(id);
+            subtask.setEnable(true);
+            subtaskMapper.updateById(subtask);
             if (subtask == null){
                 throw new ServiceException(ErrorCode.NOT_FOUND_ERROR);
             }

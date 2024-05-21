@@ -14,7 +14,7 @@ import com.hjong.aifilterbox.service.TaskService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin
+
 @RequestMapping("/task")
 @RestController
 public class TaskController {

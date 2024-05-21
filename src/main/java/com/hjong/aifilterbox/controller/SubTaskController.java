@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2024/5/15
  **/
 
-@CrossOrigin
+
 @RequestMapping("/subtask")
 @RestController
 public class SubTaskController {
@@ -62,7 +62,7 @@ public class SubTaskController {
     }
 
     @PutMapping("/enable")
-    public Result<Void> enableSubTask(@RequestParam Long id, @RequestParam Boolean enable) {
+    public Result<Void> enableSubTask(@RequestParam("id") Long id, @RequestParam("enable") Boolean enable) {
         subTaskService.updateEnable(id, enable);
         return Result.ok();
     }
